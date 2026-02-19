@@ -27,8 +27,10 @@ require("lazy").setup({
     require 'plugins.lsp',
     -- require 'plugins.indent-blankline',
     require 'plugins.trouble',
-    --require 'plugins.autoformat',
+    require 'plugins.highlight-undo',
+    require 'plugins.rainbow-delimiters',
     --require 'plugins.autocompletion',
+    --require 'plugins.autoformat',
     --require 'plugins.mini',
 
   },
