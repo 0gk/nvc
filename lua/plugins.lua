@@ -22,6 +22,7 @@ require("lazy").setup({
     require 'plugins.neo-tree',
     require 'plugins.telescope',
     require 'plugins.bufferline',
+    require 'plugins.bufdelete',
     require 'plugins.lualine',
     require 'plugins.which-key',
     require 'plugins.lsp',

@@ -91,6 +91,9 @@ vim.o.showmode = false
 -- Enable break indent
 vim.o.breakindent = true
 
+-- Disables line wrapping by default
+vim.opt.wrap = false
+
 -- Save undo history
 vim.o.undofile = true
 

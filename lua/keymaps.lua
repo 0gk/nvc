@@ -4,8 +4,17 @@
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Diagnostic Config & Keymaps
+
+-- Toggle line wrapping on the fly
+vim.keymap.set('n', '<leader>w', function()
+  vim.opt.wrap = not vim.opt.wrap:get()
+  -- Optional: Prints a quick status message at the bottom of the screen
+  print("Line wrap: " .. (vim.opt.wrap:get() and "ON" or "OFF"))
+end, { desc = 'Toggle line [W]rap' })
+
+-- Diagnostic Config & Keymaps ==================
 -- See :help vim.diagnostic.Opts
+
 vim.diagnostic.config {
   update_in_insert = false,
   severity_sort = true,
@@ -22,6 +31,16 @@ vim.diagnostic.config {
 
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+vim.keymap.set('n', ']e', function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR }) end, { desc = 'Go to next diagnostic [E]rror' })
+vim.keymap.set('n', '[e', function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, { desc = 'Go to previous diagnostic [E]rror' })
+vim.keymap.set('n', ']w', function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.WARN }) end, { desc = 'Go to next diagnostic [W]arning' })
+vim.keymap.set('n', '[w', function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.WARN }) end, { desc = 'Go to previous diagnostic [W]arning' })
+
+
+-- Terminal ============================
+
+vim.keymap.set('n', '<leader>th', '<Cmd>split | term | resize 15<CR>', { desc = 'Terminal: Horizontal split' })
+vim.keymap.set('n', '<leader>tv', '<Cmd>vsplit | term<CR>', { desc = 'Terminal: Vertical split' })
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -30,15 +49,8 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+-- Windows ==========================
 
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
@@ -52,23 +64,8 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
 
+-- Tabs ==============================
 
--- [[ gk Configure neo-tree]]
-
-vim.keymap.set("n", "<leader>e", "<Cmd>Neotree toggle<CR>")
-
-
--- [[ gk Configure bufferline]]
-
-vim.keymap.set("n", "[b", ":bprevious<CR>", { desc = "Previous buffer" })
-vim.keymap.set("n", "]b", ":bnext<CR>", { desc = "Next buffer" })
-vim.keymap.set('n', '<leader>1', '<cmd>buffer 1<CR>', { desc = "Go to buffer 1" })
-vim.keymap.set('n', '<leader>2', '<cmd>buffer 2<CR>', { desc = "Go to buffer 2" })
-vim.keymap.set('n', '<leader>3', '<cmd>buffer 3<CR>', { desc = "Go to buffer 3" })
-vim.keymap.set('n', '<leader>4', '<cmd>buffer 4<CR>', { desc = "Go to buffer 4" })
-vim.keymap.set('n', '<leader>5', '<cmd>buffer 5<CR>', { desc = "Go to buffer 5" })
-vim.keymap.set('n', '<leader>6', '<cmd>buffer 6<CR>', { desc = "Go to buffer 6" })
-vim.keymap.set('n', '<leader>7', '<cmd>buffer 7<CR>', { desc = "Go to buffer 7" })
-vim.keymap.set('n', '<leader>8', '<cmd>buffer 8<CR>', { desc = "Go to buffer 8" })
-vim.keymap.set('n', '<leader>9', '<cmd>buffer 9<CR>', { desc = "Go to buffer 9" })
+vim.keymap.set('n', ']t', '<Cmd>tabnext<CR>', { desc = 'Next Vim tab page' })
+vim.keymap.set('n', '[t', '<Cmd>tabprevious<CR>', { desc = 'Previous Vim tab page' })
 

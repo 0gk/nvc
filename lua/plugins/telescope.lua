@@ -73,19 +73,64 @@ return { -- Fuzzy Finder (files, lsp, etc)
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      vim.keymap.set({ 'n', 'v' }, '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader>sc', builtin.commands, { desc = '[S]earch [C]ommands' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
-      -- This runs on LSP attach per buffer (see main LSP attach function in 'neovim/nvim-lspconfig' config for more info,
+      -- Core Locators & Pickers
+      vim.keymap.set('n', '<leader>f<CR>', builtin.resume, { desc = '[F]ind [R]esume search' })
+      vim.keymap.set('n', "<leader>f'", builtin.marks, { desc = "[F]ind [']arks" })
+      vim.keymap.set('n', '<leader>f"', builtin.registers, { desc = '[F]ind ["]egisters' })
+      vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = '[F]ind Open [B]uffers' })
+      vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = '[F]ind [F]iles' })
+      vim.keymap.set('n', '<leader>fF', function()builtin.find_files({ hidden = true, no_ignore = true }) end, { desc = '[F]ind [F]iles (All/Hidden)' })
+      vim.keymap.set('n', '<leader>fg', builtin.git_files, { desc = '[F]ind [G]it Tracked Files' })
+
+      -- Recent Files ("Old Files")
+      vim.keymap.set('n', '<leader>fo', builtin.oldfiles, { desc = '[F]ind [O]ld Files' })
+      vim.keymap.set('n', '<leader>fO', function() builtin.oldfiles({ only_cwd = true }) end, { desc = '[F]ind [O]ld Files (Current Dir)' })
+
+      vim.keymap.set('n', '<leader>fd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+
+      -- Text & Line Grepping
+      vim.keymap.set('n', '<leader>fc', builtin.grep_string, { desc = '[F]ind Word at [C]ursor' })
+      vim.keymap.set('n', '<leader>fl', builtin.current_buffer_fuzzy_find, { desc = '[F]ind [L]ines in Current Buffer' })
+      vim.keymap.set('n', '<leader>fw', builtin.live_grep, { desc = '[F]ind Live [W]ord (Grep)' })
+      vim.keymap.set('n', '<leader>fW', function()
+        builtin.live_grep({ additional_args = function() return { "--hidden", "--no-ignore" } end })
+      vim.keymap.set( 'n', '<leader>f/',
+        function()
+          builtin.live_grep {
+            grep_open_files = true,
+            prompt_title = 'Live Grep in Open Files',
+          }
+        end,
+        { desc = '[S]earch [/] in Open Files' }
+      )     end, { desc = '[F]ind Live [W]ord (Grep All/Hidden)' })
+
+      -- Vim Environment & Metadata Pickers
+      vim.keymap.set('n', '<leader>fs', builtin.builtin, { desc = '[F]ind [S]mart' })
+      vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = '[F]ind [H]elp' })
+      vim.keymap.set('n', '<leader>fC', builtin.commands, { desc = '[F]ind [C]ommands' })
+      vim.keymap.set('n', '<leader>fk', builtin.keymaps, { desc = '[F]ind [K]eymaps' })
+      vim.keymap.set('n', '<leader>fm', builtin.man_pages, { desc = '[F]ind [M]an Pages' })
+      vim.keymap.set('n', '<leader>ft', builtin.colorscheme, { desc = '[F]ind [T]hemes / Colorschemes' })
+      vim.keymap.set('n', '<leader>fa', function() builtin.find_files { cwd = vim.fn.stdpath 'config' } end, { desc = '[F]ind [A]stronvim files (legacy)' })
+
+      -- Third-Party Extension Intercepts (Fallback to extensions api via telescope)
+      vim.keymap.set('n', '<leader>fn', function() require('telescope').extensions.notify.notify() end, { desc = '[F]ind [N]otifications' })
+      vim.keymap.set('n', '<leader>fp', function() require('telescope').extensions.projects.projects() end, { desc = '[F]ind [P]rojects' })
+      vim.keymap.set('n', '<leader>fs', function() require('telescope').extensions.smart_open.smart_open() end, { desc = '[F]ind [S]mart Open' })
+      vim.keymap.set('n', '<leader>fu', function() require('telescope').extensions.undo.undo() end, { desc = '[F]ind [U]ndo History' })
+
+      --  The <leader>g (GIT) GROUP
+      vim.keymap.set('n', '<leader>gb', builtin.git_branches, { desc = '[G]it [B]ranches' })
+      vim.keymap.set('n', '<leader>gc', builtin.git_commits, { desc = '[G]it [C]ommits (Repo)' })
+      vim.keymap.set('n', '<leader>gC', builtin.git_bcommits, { desc = '[G]it [C]ommits (Current File)' })
+      vim.keymap.set('n', '<leader>gt', builtin.git_status, { desc = '[G]it [T]racked Status' })
+      vim.keymap.set('n', '<leader>gT', builtin.git_stash, { desc = '[G]it S[T]ash' })
+
+      -- Git Browse (Typically relies on external gitsigns config rather than builtin telescope modules)
+      vim.keymap.set('n', '<leader>go', '<Cmd>Gitsigns toggle_current_line_blame<CR>', { desc = '[G]it Br[O]wse / Blame' })
+
+
       -- it is better explained there). This allows easily switching between pickers if you prefer using something else!
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('telescope-lsp-attach', { clear = true }),
@@ -102,7 +147,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
           -- Jump to the definition of the word under your cursor.
           -- This is where a variable was first declared, or where a function is defined, etc.
           -- To jump back, press <C-t>.
-          vim.keymap.set('n', 'grd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
+          vim.keymap.set('n', 'gd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
 
           -- Fuzzy find all the symbols in your current document.
           -- Symbols are things like variables, functions, types, etc.
@@ -115,35 +160,11 @@ return { -- Fuzzy Finder (files, lsp, etc)
           -- Jump to the type of the word under your cursor.
           -- Useful when you're not sure what type a variable is and you want to see
           -- the definition of its *type*, not where it was *defined*.
-          vim.keymap.set('n', 'grt', builtin.lsp_type_definitions, { buffer = buf, desc = '[G]oto [T]ype Definition' })
+          vim.keymap.set('n', 'gy', builtin.lsp_type_definitions, { buffer = buf, desc = '[G]oto [T]ype Definition' })
         end,
       })
 
-      -- Override default behavior and theme when searching
-      vim.keymap.set('n', '<leader>/', function()
-        -- You can pass additional configuration to Telescope to change the theme, layout, etc.
-        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 10,
-          previewer = false,
-        })
-      end, { desc = '[/] Fuzzily search in current buffer' })
 
-      -- It's also possible to pass additional configuration options.
-      --  See `:help telescope.builtin.live_grep()` for information about particular keys
-      vim.keymap.set(
-        'n',
-        '<leader>s/',
-        function()
-          builtin.live_grep {
-            grep_open_files = true,
-            prompt_title = 'Live Grep in Open Files',
-          }
-        end,
-        { desc = '[S]earch [/] in Open Files' }
-      )
-
-      -- Shortcut for searching your Neovim configuration files
-      vim.keymap.set('n', '<leader>sn', function() builtin.find_files { cwd = vim.fn.stdpath 'config' } end, { desc = '[S]earch [N]eovim files' })
     end,
   }
 

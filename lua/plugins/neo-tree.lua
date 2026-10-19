@@ -12,5 +12,9 @@ return {
         width = 25,
       },
     },
+    keys = {
+      { '<leader>e', '<Cmd>Neotree toggle<CR>', desc = 'Neotree toggle' },
+      { '<leader>o', '<Cmd>Neotree focus<CR>', desc = 'Neotree focus' },
+    },
 }
 
