@@ -27,7 +27,7 @@ require("lazy").setup({
     require 'plugins.which-key',
     require 'plugins.lsp',
     -- require 'plugins.indent-blankline',
-    require 'plugins.trouble',
+    -- require 'plugins.trouble',
     require 'plugins.highlight-undo',
     require 'plugins.rainbow-delimiters',
     --require 'plugins.autocompletion',
