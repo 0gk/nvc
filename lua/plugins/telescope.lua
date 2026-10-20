@@ -56,11 +56,14 @@ return { -- Fuzzy Finder (files, lsp, etc)
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
+        defaults = {
+           mappings = {
+             i = {
+               ["<C-j>"] = "move_selection_next",
+               ["<C-k>"] = "move_selection_previous",
+             },
+           },
+        },
         -- pickers = {}
         extensions = {
           ['ui-select'] = { require('telescope.themes').get_dropdown() },
@@ -138,29 +141,17 @@ return { -- Fuzzy Finder (files, lsp, etc)
           local buf = event.buf
 
           -- Find references for the word under your cursor.
-          vim.keymap.set('n', 'grr', builtin.lsp_references, { buffer = buf, desc = '[G]oto [R]eferences' })
-
-          -- Jump to the implementation of the word under your cursor.
-          -- Useful when your language has ways of declaring types without an actual implementation.
-          vim.keymap.set('n', 'gri', builtin.lsp_implementations, { buffer = buf, desc = '[G]oto [I]mplementation' })
-
-          -- Jump to the definition of the word under your cursor.
-          -- This is where a variable was first declared, or where a function is defined, etc.
-          -- To jump back, press <C-t>.
-          vim.keymap.set('n', 'gd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
-
+          vim.keymap.set('n', 'grr', function() require('telescope.builtin').lsp_references() end, { buffer = buf, desc = 'LSP: Go to references' })
+          vim.keymap.set('n', '<leader>lR', function() require('telescope.builtin').lsp_references() end, { buffer = buf, desc = 'LSP: Go to references' })
           -- Fuzzy find all the symbols in your current document.
-          -- Symbols are things like variables, functions, types, etc.
-          vim.keymap.set('n', 'gO', builtin.lsp_document_symbols, { buffer = buf, desc = 'Open Document Symbols' })
-
+          vim.keymap.set('n', 'gO', function() require('telescope.builtin').lsp_document_symbols() end, { buffer = buf, desc = 'LSP: Document symbols (List)' })
+          vim.keymap.set('n', '<leader>ls', function() require('telescope.builtin').lsp_document_symbols() end, { buffer = buf, desc = 'LSP: Document symbols' })
           -- Fuzzy find all the symbols in your current workspace.
-          -- Similar to document symbols, except searches over your entire project.
-          vim.keymap.set('n', 'gW', builtin.lsp_dynamic_workspace_symbols, { buffer = buf, desc = 'Open Workspace Symbols' })
+          vim.keymap.set('n', '<leader>lG', function() require('telescope.builtin').lsp_dynamic_workspace_symbols() end, { buffer = buf, desc = 'LSP: Workspace symbols' })
+          vim.keymap.set('n', '<leader>lD', function() require('telescope.builtin').lsp_workspace_diagnostics() end, { buffer = buf, desc = 'LSP: All workspace diagnostics' })
 
-          -- Jump to the type of the word under your cursor.
-          -- Useful when you're not sure what type a variable is and you want to see
-          -- the definition of its *type*, not where it was *defined*.
-          vim.keymap.set('n', 'gy', builtin.lsp_type_definitions, { buffer = buf, desc = '[G]oto [T]ype Definition' })
+
+
         end,
       })
 

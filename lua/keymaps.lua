@@ -29,7 +29,19 @@ vim.diagnostic.config {
   jump = { float = true },
 }
 
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>xq', vim.diagnostic.setqflist, { desc = 'Open diagnostic quickfix list' })
+-- vim.keymap.set('n', ']q', ':cnext<CR>zz', { desc = "Next quickfix item" })
+-- vim.keymap.set('n', '[q', ':cprev<CR>zz', { desc = "Previous quickfix item" })
+vim.keymap.set('n', ']q', function() vim.diagnostic.goto_next({ float = true }) end, { desc = 'Next diagnostic' })
+vim.keymap.set('n', '[q', function() vim.diagnostic.goto_prev({ float = true }) end, { desc = 'Previous diagnostic' })
+vim.keymap.set('n', ']Q', ':clast<CR>zz', { desc = "Last quickfix item" })
+vim.keymap.set('n', '[Q', ':cfirst<CR>zz', { desc = "First quickfix item" })
+
+vim.keymap.set('n', '<leader>xl', vim.diagnostic.setloclist, { desc = 'Open diagnostic location list' })
+vim.keymap.set('n', ']l', function() vim.diagnostic.goto_next({ float = true }) end, { desc = 'Next diagnostic' })
+vim.keymap.set('n', '[l', function() vim.diagnostic.goto_prev({ float = true }) end, { desc = 'Previous diagnostic' })
+vim.keymap.set('n', ']L', function() vim.diagnostic.jump({ count = #vim.diagnostic.get(0), float = true }) end, { desc = 'Last diagnostic' })
+vim.keymap.set('n', '[L', function() vim.diagnostic.jump({ count = 1, float = true }) end, { desc = 'First diagnostic' })
 
 vim.keymap.set('n', ']e', function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR }) end, { desc = 'Go to next diagnostic [E]rror' })
 vim.keymap.set('n', '[e', function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, { desc = 'Go to previous diagnostic [E]rror' })

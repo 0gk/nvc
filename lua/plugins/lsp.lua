@@ -35,18 +35,63 @@ return {
       vim.api.nvim_create_autocmd('LspAttach', {
         desc = 'LSP actions',
         callback = function(event)
-          local opts = {buffer = event.buf}
+          local buf = vim.api.nvim_get_current_buf() -- или event.buf, если вы внутри автокоманды LspAttach
 
-          vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-          vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-          vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-          vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-          vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-          vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-          vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-          vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-          vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
-          vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+         -- Info and utility tools 
+          vim.keymap.set('n', '<leader>li', '<cmd>LspInfo<cr>', { buffer = buf, desc = 'LSP: Show LSP information' })
+          vim.keymap.set('n', '<leader>lI', '<cmd>NoneLsInfo<cr>', { buffer = buf, desc = 'LSP: Show None-ls information' })
+          vim.keymap.set('n', '<leader>lS', '<cmd>SymbolsOutline<cr>', { buffer = buf, desc = 'LSP: Toggle symbols outline' })
+
+          -- Hover tooltips and popups
+          vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = buf, desc = 'LSP: Hover documentation' })
+          vim.keymap.set('n', '<leader>lh', vim.lsp.buf.signature_help, { buffer = buf, desc = 'LSP: Signature help' })
+
+
+
+          -- Code modification actions
+          vim.keymap.set({'n', 'x'}, '<leader>lf', function() vim.lsp.buf.format({ async = true }) end, { buffer = buf, desc = 'LSP: Format document' })
+
+          vim.keymap.set('n', 'grn', vim.lsp.buf.rename, { buffer = buf, desc = 'LSP: Rename symbol' })
+          vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, { buffer = buf, desc = 'LSP: Rename symbol' })
+
+          vim.keymap.set('n', 'gra', vim.lsp.buf.code_action, { buffer = buf, desc = 'LSP: Code action' })
+          vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, { buffer = buf, desc = 'LSP: Code action' })
+          vim.keymap.set('n', '<leader>lA', function() vim.lsp.buf.code_action({ context = { only = { 'source' } } }) end, { buffer = buf, desc = 'LSP: Source code actions' })
+
+          -- Line diagnostics
+          vim.keymap.set('n', 'gl', vim.diagnostic.open_float, { buffer = buf, desc = 'LSP: Line diagnostics' })
+          vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, { buffer = buf, desc = 'LSP: Line diagnostics' })
+          -- Note: <C-W>d is built into Neovim by default for line diagnostics mapping
+
+          -- defined in main kemaps file
+          -- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { buffer = buf, desc = 'LSP: Next diagnostic' })
+          -- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { buffer = buf, desc = 'LSP: Previous diagnostic' })
+          -- vim.keymap.set('n', ']e', function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR }) end, { buffer = buf, desc = 'LSP: Next error' })
+          -- vim.keymap.set('n', '[e', function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, { buffer = buf, desc = 'LSP: Previous error' })
+          -- vim.keymap.set('n', ']w', function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.WARN }) end, { buffer = buf, desc = 'LSP: Next warning' })
+          -- vim.keymap.set('n', '[w', function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.WARN }) end, { buffer = buf, desc = 'LSP: Previous warning' })
+
+          -- -- Neovim v0.12+ Workspace Diagnostics feature check
+          if vim.fn.has('nvim-0.12') == 1 then
+            vim.keymap.set('n', '<leader>lw', vim.diagnostic.get_workspace, { buffer = buf, desc = 'LSP: Workspace diagnostics text' })
+          end
+
+          -- Neovim v0.11+ Document Symbol navigation feature check
+          if vim.lsp.buf.document_symbol_next then
+            vim.keymap.set('n', ']y', vim.lsp.buf.document_symbol_next, { buffer = buf, desc = 'LSP: Next document symbol' })
+            vim.keymap.set('n', '[y', vim.lsp.buf.document_symbol_prev, { buffer = buf, desc = 'LSP: Previous document symbol' })
+          end
+
+          -- Direct jumps (Will open quickfix list ONLY if multiple targets are found)
+          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = buf, desc = 'LSP: Go to definition' })
+          vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { buffer = buf, desc = 'LSP: Go to declaration' })
+          vim.keymap.set('n', 'gy', vim.lsp.buf.type_definition, { buffer = buf, desc = 'LSP: Go to type definition' })
+          vim.keymap.set('n', 'gri', vim.lsp.buf.implementation, { buffer = buf, desc = 'LSP: Go to implementation' })
+
+
+          -- works via a telescope:
+          -- vim.keymap.set('n', 'gri', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+          -- vim.keymap.set('n', 'grr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
         end,
       })
 
